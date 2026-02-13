@@ -1,0 +1,35 @@
+from abc import ABC, abstractmethod
+from typing import Protocol
+
+#first step:
+class ProcessingPipeline(ABC):
+    pass
+
+
+class JSONAdapter(ProcessingPipeline):
+    pass
+class CSVAdapter(ProcessingPipeline):
+    pass 
+
+class StreamAdapter(ProcessingPipeline)
+    pass 
+
+class InputStage():
+    pass
+
+class TransformStage():
+    pass
+
+class OutputStage():
+    pass
+
+class ProcessingStage(Protocol):
+    pass 
+
+
+def main():
+    print("=== CODE NEXUS - ENTERPRISE PIPELINE SYSTEM ===\n")
+    print("Initializing Nexus Manager...")
+
+
+main()
