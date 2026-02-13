@@ -1,0 +1,200 @@
+from abc import ABC, abstractmethod
+from typing import Dict, Union
+from typing import Any
+
+
+class DataStream(ABC):
+    def __init__(self, statut, type):
+        self.statut = statut
+        self.type = type
+
+    @abstractmethod
+    def process_batch(self, data_batch: list[Any]) -> str:
+        pass
+
+
+class SensorStream(DataStream):
+    def __init__(self, statut, type, analys, temp):
+        super().__init__(statut, type)
+        self.analys = analys
+        self.temp = temp
+
+    def get_info(self) -> str:
+        print("Initializing Sensor Stream...")
+        return f"Stream ID: {self.statut}, Type: {self.type}"
+
+    def process_batch(self, data_batch: list[Any]) -> str:
+        try:
+            count = len(data_batch)
+            if count == 3:
+                msg = (f"Processing sensor batch: [temp:{data_batch[0]}, "
+                       f"humidity:{data_batch[1]}, pressure:{data_batch[2]}]")
+                return msg
+            else:
+                raise ValueError("please inter 3 argument")
+        except ValueError as e:
+            print("Error:", e)
+
+    def get_stats(self) -> Dict[str, Union[str, int, float]]:
+        dc = {
+            "Sensor analysis": f"{self.analys} readings processed,",
+            "avg temp": f"{self.temp}°C",
+        }
+        return dc
+
+
+class TransactionStream(SensorStream):
+    def __init__(self, statut, type, analys, temp):
+        super().__init__(statut, type, analys, temp)
+
+    def get_info(self) -> str:
+        print("Initializing Transaction Stream...")
+        return f"Stream ID: {self.statut}, Type: {self.type}"
+
+    def process_batch(self, data_batch: list[Any]) -> str:
+        try:
+            count = len(data_batch)
+            if count == 3:
+                msg = (f"Processing transaction batch: [buy:"
+                       f"{data_batch[0]}, sell:{data_batch[1]}, "
+                       f"buy:{data_batch[2]}]")
+                return msg
+            else:
+                raise ValueError("please inter 3 argument")
+        except ValueError as e:
+            print("Error:", e)
+
+    def get_stats(self) -> Dict[str, Union[str, int, float]]:
+        dc = {
+            "Transaction analysis": f"{self.analys} operations,",
+            "net flow:": f"+{self.temp} units",
+        }
+        return dc
+
+
+class EventStream(TransactionStream):
+    def __init__(self, statut, type, analys, temp):
+        super().__init__(statut, type, analys, temp)
+
+    def get_info(self) -> str:
+        print("Initializing Transaction Stream...")
+        return f"Stream ID: {self.statut}, Type: {self.type}"
+
+    def process_batch(self, data_batch: list[Any]) -> str:
+        try:
+            count = len(data_batch)
+            if count == 3:
+                join = ", ".join(data_batch)
+                print(join)
+                return f"Processing event batch: [{join}]"
+            else:
+                raise ValueError("please inter 3 argument")
+        except ValueError as e:
+            print("Error:", e)
+
+    def get_stats(self) -> Dict[str, Union[str, int, float]]:
+        return {
+            "Event analysis": (
+                f"{self.analys} events, "
+                f"{self.temp} error detected")
+        }
+
+
+class StreamProcessor:
+    def __init__(self, typee, stream):
+        self.stream = stream
+        self.typee = typee
+
+    def process_stream(self):
+        stream = len(self.stream)
+        if self.typee == "sensor":
+            return f"- Sensor data: {stream} readings processed"
+        elif self.typee == "transaction":
+            return f"- Transaction data: {stream} operations processed"
+        elif self.typee == "event":
+            return f"- Event data: {stream} events processed"
+        else:
+            return (
+                "- Please enter one of these types: "
+                "sensor, transaction, or event"
+                )
+
+    def filter_stream(self, priority="high"):
+        y = []
+        for x in self.stream:
+            if x["priority"] == priority:
+                y.append(x)
+        count = len(y)
+        y = []
+        for x in self.stream:
+            if x["priority"] == "critical":
+                y.append(x)
+        count_critical = len(y)
+        return (
+            f"Stream filtering active: {priority} data only\n"
+            f"Filtered results: {count_critical} "
+            f"critical sensor alerts, {count} large transaction"
+            )
+
+
+def main():
+    print("=== CODE NEXUS - POLYMORPHIC STREAM SYSTEM ===\n")
+    first = SensorStream("SENSOR_001", "Environmental Data", 3, 22.5)
+    info = first.get_info()
+    print(info)
+    sensor_data = [22.5, 65, 1013]
+    sensor_stream = first.process_batch(sensor_data)
+    print(sensor_stream)
+    dit = first.get_stats()
+    for key, value in dit.items():
+        print(f"{key} : {value} ", end="")
+    print("\n")
+
+    trans = TransactionStream("TRANS_001", "Financial Data", 3, 25)
+    info = trans.get_info()
+    print(info)
+    trans_data = [100, 150, 75]
+    transaction_stream = trans.process_batch(trans_data)
+    print(transaction_stream)
+    dic = trans.get_stats()
+    for key, value in dic.items():
+        print(f"{key} : {value} ", end="")
+    print("\n")
+
+    event = EventStream("EVENT_001", "System Events", 3, 1)
+    info = event.get_info()
+    print(info)
+    event_data = ['login', "error", "logout"]
+    event_stream = event.process_batch(event_data)
+    print(event_stream)
+
+    doc = event.get_stats()
+    for key, value in doc.items():
+        print(f"{key} : {value} ", end="")
+    print("\n")
+    print("=== Polymorphic Stream Processing ===")
+    print("Processing mixed stream types through unified interface...\n")
+    print("Batch 1 Results:")
+    str_sensor = StreamProcessor("sensor", sensor_data)
+
+    sensor = str_sensor.process_stream()
+    print(sensor)
+    str_trans = StreamProcessor("transaction", trans_data)
+    tran = str_trans.process_stream()
+    print(tran)
+    str_event = StreamProcessor("event", event_data)
+    event = str_event.process_stream()
+    print(event)
+    senso_data = [
+        {"reading": 23, "priority": "high"},
+        {"reading": 12, "priority": "low"},
+        {"reading": 45, "priority": "critical"},
+        ]
+
+    sensor = StreamProcessor("sensor", senso_data)
+    p = sensor.filter_stream("high")
+    print(p)
+    print("\nAll streams processed successfully. Nexus throughput optimal.")
+
+
+main()
