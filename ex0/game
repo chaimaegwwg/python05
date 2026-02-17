@@ -1,0 +1,155 @@
+sudoku = [
+    [5,3,0,0,7,0,0,0,0],
+    [6,0,0,1,9,5,0,0,0],
+    [0,9,8,0,0,0,0,6,0],
+
+    [8,0,0,0,6,0,0,0,3],
+    [4,0,0,8,0,3,0,0,1],
+    [7,0,0,0,2,0,0,0,6],
+
+    [0,6,0,0,0,0,2,8,0],
+    [0,0,0,4,1,9,0,0,5],
+    [0,0,0,0,8,0,0,7,9]
+]
+
+def is_valid_block(block, num):
+    check = 0
+    for i in range(9):
+        if block[i] == num:
+            check +=1
+    
+    if check > 1:
+        return False 
+
+    return True
+
+def is_valid(num , pos , sudo):
+    # check the row
+    for i in range(9):
+        if sudo[pos[0]][i] == num and pos[1] != i:
+            return False
+
+    # check the col
+    for j in range(9):
+        if sudo[j][pos[1]] == num and pos[0] != j:
+            return False
+
+    row = 0
+    col = 0
+    check = 0
+    block = []
+    # i, j = pos
+    #check the square
+    start_row = (pos[0] // 3)*3
+    start_col = (pos[1] // 3)*3
+    for i in range(3):
+        for j in range(3):
+            row = start_row + i
+            col = start_col  + j 
+            block.append(sudo[row][col])
+    if not is_valid_block(block,num): return False
+                
+    return True
+
+#search on position of 0
+def empty_position(sudo):
+    for i in range(9):
+        for j in range(9):
+            if sudo[i][j] == 0:
+                return (i, j)
+    return None
+
+
+def print_grid(sudo):
+    for i in range(9):
+        if i % 3 == 0 and i != 0:
+            print("--- + --- + ----")
+        for j in range(9):
+            if j % 3 == 0 and j !=0:
+                print(" | ",end = "")
+            print(sudo[i][j],end = "")
+        print()
+    
+class Helper:
+    def __init__(self, row, col):
+        self.last_num = set()
+        self.pos = (row, col)
+
+def main(sudoku):
+    stack = []
+    pos = empty_position(sudoku)
+    check = 0
+    i , j = pos
+    # helper = Helper( i , j)
+    
+    # for num in range(1,10):
+    #     is_validate = is_valid(num , pos , sudoku)
+    #     if is_validate == True:
+    #         (i, j)= pos
+    #         sudoku[i][j] = num
+    #         helper.last_num.add(num)
+
+    #     stack.append(pos)
+        
+        
+    stack.append(Helper( i , j))
+    
+    while stack:
+        print("Stack length:", len(stack))
+        print("Current helper pos:", helper.pos)
+        print("Numbers tried:", helper.last_num)
+        print("Board state:\n")
+        # pos, num_last = stack[-1]
+        check = 0
+        helper = stack[-1]
+        for num in range(1, 10):
+            if num in helper.last_num:
+                continue
+            else:
+
+                is_validate = is_valid(num , helper.pos , sudoku)
+                if is_validate == True:
+                    i, j= helper.pos
+                    sudoku[i][j] = num
+                    helper.last_num.add(num)
+
+                    check = 1
+                    break
+                
+        if check == 0:
+            x, y= helper.pos
+            print(f"Backtracking from {helper.pos}, resetting value {sudoku[x][y]}")
+            sudoku[x][y] = 0
+            stack.pop()
+            check = 0
+        else:
+            pos = empty_position(sudoku)
+            print("Next empty position:", pos)
+            if pos is not None:
+                i , j = pos 
+                stack.append(Helper(i, j))
+
+        if pos is None or not stack :
+            break 
+
+        
+    print_grid(sudoku)
+    
+main(sudoku)
+
+# sudoku[pos[0]][pos[1]] = 4
+# print()
+# print("the pose",pos[0],pos[1])
+# is_valid(num , pos , sudoku)
+# # print(v)
+# print()
+# print()
+# print()
+
+
+
+
+# print_grid(sudoku)
+
+
+
