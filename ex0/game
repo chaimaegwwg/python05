@@ -56,6 +56,7 @@ def empty_position(sudo):
     for i in range(9):
         for j in range(9):
             if sudo[i][j] == 0:
+                # print(i,j)
                 return (i, j)
     return None
 
@@ -80,28 +81,23 @@ def main(sudoku):
     pos = empty_position(sudoku)
     check = 0
     i , j = pos
-    # helper = Helper( i , j)
-    
-    # for num in range(1,10):
-    #     is_validate = is_valid(num , pos , sudoku)
-    #     if is_validate == True:
-    #         (i, j)= pos
-    #         sudoku[i][j] = num
-    #         helper.last_num.add(num)
-
-    #     stack.append(pos)
-        
+   
         
     stack.append(Helper( i , j))
-    
+    helper = stack
+    # for helper in stack:
+    #     helper.last_num.add(5)
+    #     print("Pos:", helper.pos, "Last numbers tried:", helper.last_num)
+    n = 0
+    history = []
     while stack:
-        print("Stack length:", len(stack))
-        print("Current helper pos:", helper.pos)
-        print("Numbers tried:", helper.last_num)
-        print("Board state:\n")
-        # pos, num_last = stack[-1]
+        # n +=1
         check = 0
+        n = 0
         helper = stack[-1]
+        # for helper in stack:
+        print("Pos:", helper.pos, "Last numbers tried:", helper.last_num)
+        # pos, num_last = stack[-1]
         for num in range(1, 10):
             if num in helper.last_num:
                 continue
@@ -120,20 +116,31 @@ def main(sudoku):
             x, y= helper.pos
             print(f"Backtracking from {helper.pos}, resetting value {sudoku[x][y]}")
             sudoku[x][y] = 0
+            history.append(stack[-1])
             stack.pop()
-            check = 0
+            
+            # check = 1
+        #if that is the first time that it creat like if not == 0 that mean is the last one found a partener 
         else:
             pos = empty_position(sudoku)
             print("Next empty position:", pos)
+
+            (i , j) = pos
             if pos is not None:
-                i , j = pos 
+                for test in history:
+                    if test.pos == pos:
+                        stack.append(test)
+                        history.remove(test)
+                        n = 1
+            if n == 0:
                 stack.append(Helper(i, j))
+                     
 
         if pos is None or not stack :
             break 
-
-        
-    print_grid(sudoku)
+        # if n == 20:
+        #     break
+    # print_grid(sudoku)
     
 main(sudoku)
 
