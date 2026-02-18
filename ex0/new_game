@@ -31,6 +31,16 @@ board = [["5","3",".",".","7",".",".",".","."],
          [".",".",".","4","1","9",".",".","5"],
          [".",".",".",".","8",".",".","7","9"]]
 
+#test Time Limit Exceeded en this board
+extra = [[".",".",".",".",".",".",".",".","."],
+         [".","9",".",".","1",".",".","3","."],
+         [".",".","6",".","2",".","7",".","."],
+         [".",".",".","3",".","4",".",".","."],
+         ["2","1",".",".",".",".",".","9","8"],
+         [".",".",".",".",".",".",".",".","."],
+         [".",".","2","5",".","6","4",".","."],
+         [".","8",".",".",".",".",".","1","."],
+         [".",".",".",".",".",".",".",".","."]]
 class Helper:
     def __init__(self, row, col):
         self.last_num = set()
@@ -39,11 +49,15 @@ class Helper:
 class Solution(object):  
     def is_valid_block(self ,block, num):
         check = 0
+        # print("here the block : ",block)
         for i in range(9):
+            
             if block[i] == num:
                 check +=1
-        if check > 1:
+                # print("i see it ")
+        if check >= 1:
             return False 
+
         return True
 
     def is_valid(self, num , pos , sudo):
@@ -59,9 +73,8 @@ class Solution(object):
 
         row = 0
         col = 0
-        check = 0
+        # check = 0
         block = []
-        # i, j = pos
         #check the square
         start_row = (pos[0] // 3)*3
         start_col = (pos[1] // 3)*3
@@ -70,7 +83,8 @@ class Solution(object):
                 row = start_row + i
                 col = start_col  + j 
                 block.append(sudo[row][col])
-        if not self.is_valid_block(block,num): return False
+        if not self.is_valid_block(block, num): return False
+   
 
         return True
 
@@ -96,6 +110,15 @@ class Solution(object):
 
 
     def solveSudoku(self, sudoku):
+        #------------------ just for test ---------------
+        # pos = self.empty_position(sudoku)
+        # num = 5
+        # num = str(num)
+        # if self.is_valid(num , pos , sudoku) == True:
+        #     print("yes")
+        # else:
+        #     print("no")
+        # -------------------------------------------
         stack = []
         pos = self.empty_position(sudoku)
         check = 0
@@ -106,11 +129,10 @@ class Solution(object):
         helper = stack
         while stack:
             check = 0
-            # n = 0
+    
             helper = stack[-1]
-            # print("Pos:", helper.pos, "Last numbers tried:", helper.last_num)
-            # pos, num_last = stack[-1]
             for num in range(1, 10):
+                num = str(num)
                 if num in helper.last_num:
                     continue
                 else:
@@ -119,15 +141,15 @@ class Solution(object):
                     if is_validate == True:
                         i, j= helper.pos
                         sudoku[i][j] = num
-                        helper.last_num.add(num)
+                        helper.last_num.add(str(num))
 
                         check = 1
                         break
-                    
+            print("waiting .....")       
             if check == 0:
                 x, y= helper.pos
                 # print(f"Backtracking from {helper.pos}, resetting value {sudoku[x][y]}")
-                sudoku[x][y] = "."
+                sudoku[x][y] ="."
                 stack.pop()
 
                 # check = 1
@@ -150,6 +172,6 @@ class Solution(object):
     # solveSudoku(sudoku)
 
 s = Solution()
-s.solveSudoku(board)
+s.solveSudoku(extra)
 
 
